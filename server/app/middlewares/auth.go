@@ -9,6 +9,18 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// AuthMiddleware is a middleware that checks for a valid JWT token in the authorization header of an incoming request,
+// and sets the user ID from the token to the gin context.
+//
+// It takes a secret key to validate the token.
+//
+// If the request does not have a valid token, it returns a 401 Unauthorized status. If the token is not valid, it returns
+// a 401 Unauthorized status with a JSON response containing the error message. If the token is valid, it sets the
+// user ID to the gin context and calls the next handler in the chain.
+//
+// Example usage:
+//
+// router.GET("/api/protected", AuthMiddleware("secretKey"), protectedHandler)
 func AuthMiddleware(secretKey string) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		token, err := extractToken(c)
