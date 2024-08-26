@@ -13,3 +13,7 @@ type Course struct {
 	Category    string `json:"category"`
 	IsActive    bool   `json:"is_active"`
 }
+
+func (c *Course) TableName() string {
+	return "courses"
+}
