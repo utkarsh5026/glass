@@ -46,6 +46,9 @@ func AuthMiddleware(secretKey string) gin.HandlerFunc {
 	}
 }
 
+// extractToken extracts the JWT token from the Authorization header of the request.
+// It expects the token to be in the format "Bearer <token>".
+// Returns the token string if found, or an error if the header is missing or incorrectly formatted.
 func extractToken(c *gin.Context) (string, error) {
 	authHeader := c.GetHeader("Authorization")
 	if authHeader == "" {
@@ -60,6 +63,9 @@ func extractToken(c *gin.Context) (string, error) {
 	return bearerToken[1], nil
 }
 
+// validateToken parses and validates the JWT token using the provided secret key.
+// It checks if the token is properly signed and not expired.
+// Returns the token claims if valid, or an error if the token is invalid or expired.
 func validateToken(tokenStr, secretKey string) (jwt.MapClaims, error) {
 	token, err := jwt.Parse(tokenStr, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
@@ -80,6 +86,9 @@ func validateToken(tokenStr, secretKey string) (jwt.MapClaims, error) {
 	return claims, nil
 }
 
+// extractUserID retrieves the user ID from the JWT claims.
+// It expects the user ID to be stored in the "user_id" claim as a float64.
+// Returns the user ID as a uint if found, or an error if not present or of incorrect type.
 func extractUserID(claims jwt.MapClaims) (uint, error) {
 	userID, ok := claims["user_id"].(float64)
 	if !ok {
@@ -88,6 +97,9 @@ func extractUserID(claims jwt.MapClaims) (uint, error) {
 	return uint(userID), nil
 }
 
+// handleAuthError sends a JSON response with the given error message and status code,
+// then aborts the current request processing.
+// This function is used to handle authentication errors in a consistent manner.
 func handleAuthError(c *gin.Context, status int, message string) {
 	c.JSON(status, gin.H{"error": message})
 	c.Abort()
