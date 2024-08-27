@@ -104,3 +104,10 @@ func handleAuthError(c *gin.Context, status int, message string) {
 	c.JSON(status, gin.H{"error": message})
 	c.Abort()
 }
+
+var (
+	ExportedExtractToken    = extractToken
+	ExportedValidateToken   = validateToken
+	ExportedExtractUserID   = extractUserID
+	ExportedHandleAuthError = handleAuthError
+)
