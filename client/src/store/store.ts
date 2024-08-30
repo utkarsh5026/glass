@@ -1,9 +1,12 @@
-import {configureStore} from "@reduxjs/toolkit";
+import { configureStore } from "@reduxjs/toolkit";
+import mentorReducer from "./people/mentorSlice";
+import studentReducer from "./people/studentSlice";
 
 const store = configureStore({
-    reducer: {
-        // Add reducers here
-    }
+  reducer: {
+    mentors: mentorReducer,
+    students: studentReducer,
+  },
 });
 
 export type RootState = ReturnType<typeof store.getState>;
