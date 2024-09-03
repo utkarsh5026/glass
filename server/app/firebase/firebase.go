@@ -21,7 +21,7 @@ func InitializeFirebase() (*firebase.App, error) {
 	ctx := context.Background()
 
 	dir := currentDir()
-	filePath := filepath.Join(dir, "credentials.json")
+	filePath := filepath.Join(dir, "google-credentials.json")
 	if _, err := os.Stat(filePath); os.IsNotExist(err) {
 		return nil, fmt.Errorf("credentials file not found: %v", err)
 	}

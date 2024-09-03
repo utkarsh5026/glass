@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"google.golang.org/api/iterator"
 	"io"
 	"log"
 	"mime/multipart"
@@ -231,12 +232,15 @@ func (s *CloudStorage) ListFiles(path string) ([]string, error) {
 	it := bucket.Objects(ctx, &googleStorage.Query{Prefix: path})
 	for {
 		attrs, err := it.Next()
-		if errors.Is(err, googleStorage.ErrObjectNotExist) {
+		fmt.Println(len(fileList))
+
+		if errors.Is(err, iterator.Done) {
 			break
 		}
 		if err != nil {
 			return nil, fmt.Errorf("error listing files: %v", err)
 		}
+
 		fileList = append(fileList, attrs.Name)
 	}
 
