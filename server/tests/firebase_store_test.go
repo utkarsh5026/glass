@@ -58,32 +58,27 @@ func createFileHeader(filename string, content []byte) (*multipart.FileHeader, e
 	var body bytes.Buffer
 	writer := multipart.NewWriter(&body)
 
-	// Create the form file
 	part, err := writer.CreateFormFile("file", filename)
 	if err != nil {
-		return nil, fmt.Errorf("error creating form file: %w", err)
+		return nil, err
 	}
 
-	// Write the file content to the form
 	_, err = part.Write(content)
 	if err != nil {
 		return nil, fmt.Errorf("error writing file content: %w", err)
 	}
 
-	// Close the multipart writer
 	err = writer.Close()
 	if err != nil {
 		return nil, fmt.Errorf("error closing multipart writer: %w", err)
 	}
 
-	// Parse the multipart form
 	reader := multipart.NewReader(&body, writer.Boundary())
 	form, err := reader.ReadForm(int64(body.Len()))
 	if err != nil {
 		return nil, fmt.Errorf("error reading multipart form: %w", err)
 	}
 
-	// Get the file header
 	fileHeaders := form.File["file"]
 	if len(fileHeaders) == 0 {
 		return nil, fmt.Errorf("no file headers found")
