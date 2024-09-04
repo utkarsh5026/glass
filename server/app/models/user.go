@@ -7,21 +7,12 @@ import (
 	"gorm.io/gorm"
 )
 
-type Role string
-
-const (
-	RoleStudent Role = "student"
-	RoleTeacher Role = "teacher"
-	RoleAdmin   Role = "admin"
-)
-
 type User struct {
 	gorm.Model
 	FirstName   string       `json:"firstName" gorm:"not null"`
 	LastName    string       `json:"lastName" gorm:"not null"`
 	Email       string       `json:"email" gorm:"uniqueIndex;not null"`
 	Password    string       `json:"-" gorm:"not null"` // The "-" ensures this field is not serialized to JSON
-	Role        Role         `json:"role" gorm:"not null"`
 	DateOfBirth time.Time    `json:"dateOfBirth"`
 	ProfilePic  string       `json:"profilePic"`
 	Bio         string       `json:"bio"`
