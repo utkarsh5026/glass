@@ -300,3 +300,79 @@ func (s *SubmissionService) CanSeeSubmission(userID, submissionID uint) (bool, e
 
 	return count > 0, nil
 }
+
+// GetSubmissionsForAssignment retrieves all submissions for a given assignment.
+//
+// Parameters:
+//   - assignmentID: The ID of the assignment to retrieve submissions for.
+//
+// Returns:
+//   - []models.Submission: A slice of submissions for the given assignment.
+//   - error: An error if the database query fails, nil otherwise.
+func (s *SubmissionService) GetSubmissionsForAssignment(assignmentID uint) ([]models.Submission, error) {
+	var submissions []models.Submission
+	if err := s.db.Where("assignment_id = ?", assignmentID).
+		Preload("Files").
+		Preload("Grade").
+		Find(&submissions).Error; err != nil {
+		return nil, err
+	}
+	return submissions, nil
+}
+
+// UpdateSubmission updates an existing submission with new files.
+//
+// Parameters:
+//   - submissionID: The ID of the submission to update.
+//   - files: A slice of multipart.FileHeader pointers representing the new files to be uploaded.
+//
+// Returns:
+//   - *models.Submission: A pointer to the updated Submission model.
+//   - error: An error if the submission update fails, nil otherwise.
+//
+// Possible errors:
+//   - If the submission is not found.
+//   - If the submission is already graded.
+//   - If there's an error uploading files or updating the database.
+func (s *SubmissionService) UpdateSubmission(submissionID uint, files []*multipart.FileHeader) (*models.Submission, error) {
+	submission, err := s.GetSubmission(submissionID)
+	if err != nil {
+		return nil, err
+	}
+
+	if submission.Status == models.SubmissionStatusGraded {
+		return nil, CannotPerformAction("update a graded submission")
+	}
+
+	err = s.db.Transaction(func(tx *gorm.DB) error {
+		for _, file := range files {
+			options := FileOptions{
+				Path: fmt.Sprintf("submissions/%d", submission.ID),
+			}
+			baseFile, err := UploadFile(s.firestore, file, options)
+			if err != nil {
+				return err
+			}
+
+			submissionFile := models.SubmissionFile{
+				SubmissionId: submission.ID,
+				BaseFile:     baseFile,
+			}
+
+			if err := tx.Create(&submissionFile).Error; err != nil {
+				return CreateEntityFailure(err)
+			}
+		}
+
+		submission.SubmittedAt = time.Now()
+		submission.Status = models.SubmissionStatusSubmitted
+
+		return tx.Save(submission).Error
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	return submission, nil
+}
