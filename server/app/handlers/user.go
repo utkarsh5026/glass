@@ -73,8 +73,8 @@ func (h *UserHandler) GetProfile(c *gin.Context) {
 
 // UpdateProfile updates the user profile for the authenticated user
 func (h *UserHandler) UpdateProfile(c *gin.Context) {
-	userID, _ := c.Get("userID")
-	user, err := h.serv.GetUserByID(userID.(uint))
+	userID := GetUserID(c)
+	user, err := h.serv.GetUserByID(userID)
 	if err != nil {
 		HandleNotFound(c, "User not found")
 		return
@@ -97,7 +97,7 @@ func (h *UserHandler) UpdateProfile(c *gin.Context) {
 func (h *UserHandler) DeleteUser(c *gin.Context) {
 	userID, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
-		HandleBadRequest(c, "Invalid user ID")
+		HandleBadRequest(c, InvalidUserID)
 		return
 	}
 
@@ -111,7 +111,7 @@ func (h *UserHandler) DeleteUser(c *gin.Context) {
 
 // ChangePassword changes the password for the authenticated user
 func (h *UserHandler) ChangePassword(c *gin.Context) {
-	userID, _ := c.Get("userID")
+	userID := GetUserID(c)
 	var passwordData struct {
 		OldPassword string `json:"oldPassword" binding:"required"`
 		NewPassword string `json:"newPassword" binding:"required"`
@@ -124,7 +124,7 @@ func (h *UserHandler) ChangePassword(c *gin.Context) {
 
 	oldP := passwordData.OldPassword
 	newP := passwordData.NewPassword
-	if err := h.serv.ChangePassword(userID.(uint), oldP, newP); err != nil {
+	if err := h.serv.ChangePassword(userID, oldP, newP); err != nil {
 		HandleBadRequest(c, err.Error())
 		return
 	}
