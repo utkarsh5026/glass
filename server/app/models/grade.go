@@ -12,7 +12,11 @@ type Grade struct {
 	Submission   Submission `json:"-" gorm:"foreignkey:SubmissionID"`
 	GradedBy     uint       `json:"gradedBy" gorm:"not null"`
 	GradedByUser User       `json:"gradedByUser" gorm:"foreignkey:GradedBy"`
-	PointsEarned int        `json:"pointsEarned" gorm:"not null"`
+	PointsEarned float64    `json:"pointsEarned" gorm:"not null"`
 	Feedback     string     `json:"feedback" gorm:"type:text"`
 	GradedAt     time.Time  `json:"gradedAt" gorm:"not null"`
+}
+
+func (Grade) TableName() string {
+	return "grades"
 }
