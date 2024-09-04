@@ -104,3 +104,51 @@ func DeleteFiles(store *firebase.CloudStorage, files []models.BaseFile) error {
 
 	return nil
 }
+
+// UploadFiles uploads multiple files concurrently to Firebase Cloud Storage.
+//
+// Parameters:
+//   - store: A pointer to the Firebase CloudStorage instance.
+//   - files: A slice of multipart.FileHeader pointers representing the files to be uploaded.
+//   - options: FileOptions struct containing upload configuration options.
+//
+// Returns:
+//   - []models.BaseFile: A slice of BaseFile structs containing information about the uploaded files.
+//   - error: An error if any file upload fails, nil if all files are uploaded successfully.
+func UploadFiles(store *firebase.CloudStorage, files []*multipart.FileHeader, options FileOptions) ([]models.BaseFile, error) {
+	baseFiles := make([]models.BaseFile, 0, len(files))
+	errChan := make(chan error, len(files))
+	var wg sync.WaitGroup
+
+	for _, file := range files {
+		wg.Add(1)
+		go func(file *multipart.FileHeader) {
+			defer wg.Done()
+			baseFile, err := UploadFile(store, file, options)
+			if err != nil {
+				errChan <- err
+				return
+			}
+			baseFiles = append(baseFiles, baseFile)
+		}(file)
+	}
+
+	go func() {
+		wg.Wait()
+		close(errChan)
+	}()
+
+	var errs []error
+
+	for err := range errChan {
+		if err != nil {
+			errs = append(errs, err)
+		}
+	}
+
+	if len(errs) > 0 {
+		return nil, fmt.Errorf("failed to upload %d files: %v", len(errs), errs)
+	}
+
+	return baseFiles, nil
+}
