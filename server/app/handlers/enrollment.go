@@ -35,16 +35,16 @@ func (h *EnrollmentHandler) EnrollToCourse(c *gin.Context) {
 	enrollId, err := strconv.ParseUint(c.Param("id"), 10, 32)
 
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		HandleBadRequest(c, InvalidEnrollmentID)
 		return
 	}
 
 	if err := h.serv.ApproveEnrolment(adminId, uint(enrollId)); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		SendError(err, c)
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "Enrollment approved"})
+	HandleOk(c, "Enrollment approved")
 }
 
 // RejectEnrollment handles the rejection of a pending enrollment request.
@@ -65,16 +65,16 @@ func (h *EnrollmentHandler) RejectEnrollment(c *gin.Context) {
 	enrollID, err := strconv.ParseUint(c.Param("id"), 10, 32)
 
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		HandleBadRequest(c, InvalidEnrollmentID)
 		return
 	}
 
 	if err := h.serv.RejectEnrolment(adminId, uint(enrollID)); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		SendError(err, c)
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "Enrollment rejected"})
+	HandleOk(c, "Enrollment rejected")
 }
 
 // JoinCourseByCode handles the request to join a course using an invitation code.
@@ -99,23 +99,23 @@ func (h *EnrollmentHandler) JoinCourseByCode(c *gin.Context) {
 	}
 
 	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		HandleBadRequest(c, err.Error())
 		return
 	}
 
 	if !h.serv.IsValidRole(input.Role) {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid role"})
+		HandleBadRequest(c, "Invalid role")
 		return
 	}
 
 	code := input.InvitationCode
 	role := input.Role
 	if err := h.serv.JoinCourseByCode(userId, code, models.Role(role)); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		SendError(err, c)
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "Successfully joined course"})
+	HandleOk(c, "Successfully joined course")
 }
 
 // GetPendingEnrollments retrieves all pending enrollments for a specific course.
@@ -136,23 +136,23 @@ func (h *EnrollmentHandler) GetPendingEnrollments(c *gin.Context) {
 	adminId := GetUserID(c)
 	courseId, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		HandleBadRequest(c, err.Error())
 		return
 	}
 
 	ok, err := h.serv.IsAdmin(adminId, uint(courseId))
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		SendError(err, c)
 		return
 	}
 
 	if !ok {
-		c.JSON(http.StatusForbidden, gin.H{"error": "Only course creator can get pending enrollments"})
+		HandleForbidden(c, "Only course creator can get pending enrollments")
 		return
 	}
 	enrollments, err := h.serv.GetPendingEnrollments(uint(courseId))
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		SendError(err, c)
 		return
 	}
 
