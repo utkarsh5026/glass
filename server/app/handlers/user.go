@@ -14,7 +14,6 @@ type UserHandler struct {
 	serv *services.UserService
 }
 
-// NewUserHandler creates a new UserHandler instance
 func NewUserHandler(serv *services.UserService) *UserHandler {
 	return &UserHandler{
 		serv: serv,
@@ -26,16 +25,16 @@ func NewUserHandler(serv *services.UserService) *UserHandler {
 func (h *UserHandler) Register(c *gin.Context) {
 	var user models.User
 	if err := c.ShouldBindJSON(&user); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		HandleBadRequest(c, err.Error())
 		return
 	}
 
 	if err := h.serv.CreateUser(&user); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		SendError(err, c)
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{"message": "User created successfully"})
+	HandleCreated(c, "User created successfully")
 }
 
 // Login handles user authentication
@@ -47,13 +46,13 @@ func (h *UserHandler) Login(c *gin.Context) {
 	}
 
 	if err := c.ShouldBindJSON(&loginData); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		HandleBadRequest(c, err.Error())
 		return
 	}
 
 	token, err := h.serv.AuthenticateUser(loginData.Email, loginData.Password)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		SendError(err, c)
 		return
 	}
 
@@ -65,11 +64,11 @@ func (h *UserHandler) GetProfile(c *gin.Context) {
 	userID, _ := c.Get("userID")
 	user, err := h.serv.GetUserByID(userID.(uint))
 	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
+		SendError(err, c)
 		return
 	}
 
-	c.JSON(http.StatusOK, user)
+	c.JSON(http.StatusOK, gin.H{"user": user})
 }
 
 // UpdateProfile updates the user profile for the authenticated user
@@ -77,17 +76,17 @@ func (h *UserHandler) UpdateProfile(c *gin.Context) {
 	userID, _ := c.Get("userID")
 	user, err := h.serv.GetUserByID(userID.(uint))
 	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
+		HandleNotFound(c, "User not found")
 		return
 	}
 
 	if err := c.ShouldBindJSON(user); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		HandleBadRequest(c, err.Error())
 		return
 	}
 
 	if err := h.serv.UpdateUser(user); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update user"})
+		SendError(err, c)
 		return
 	}
 
@@ -98,16 +97,16 @@ func (h *UserHandler) UpdateProfile(c *gin.Context) {
 func (h *UserHandler) DeleteUser(c *gin.Context) {
 	userID, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
+		HandleBadRequest(c, "Invalid user ID")
 		return
 	}
 
 	if err := h.serv.DeleteUser(uint(userID)); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete user"})
+		SendError(err, c)
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "User deleted successfully"})
+	HandleDeleted(c, "User deleted successfully")
 }
 
 // ChangePassword changes the password for the authenticated user
@@ -119,14 +118,16 @@ func (h *UserHandler) ChangePassword(c *gin.Context) {
 	}
 
 	if err := c.ShouldBindJSON(&passwordData); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		HandleBadRequest(c, err.Error())
 		return
 	}
 
-	if err := h.serv.ChangePassword(userID.(uint), passwordData.OldPassword, passwordData.NewPassword); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	old := passwordData.OldPassword
+	new := passwordData.NewPassword
+	if err := h.serv.ChangePassword(userID.(uint), old, new); err != nil {
+		HandleBadRequest(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "Password changed successfully"})
+	HandleOk(c, "Password changed successfully")
 }

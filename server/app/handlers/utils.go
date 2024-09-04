@@ -12,6 +12,33 @@ func GetUserID(c *gin.Context) uint {
 	return c.GetUint("userId")
 }
 
+// HandleOk sends a JSON response with a 200 OK status and the given message.
+//
+// Parameters:
+//   - c: The Gin context for the current request.
+//   - message: The message to be included in the response.
+func HandleOk(c *gin.Context, message string) {
+	c.JSON(http.StatusOK, gin.H{"message": message})
+}
+
+// HandleCreated sends a JSON response with a 201 Created status and the given message.
+//
+// Parameters:
+//   - c: The Gin context for the current request.
+//   - message: The message to be included in the response.
+func HandleCreated(c *gin.Context, message string) {
+	c.JSON(http.StatusCreated, gin.H{"message": message})
+}
+
+// HandleDeleted sends a JSON response with a 204 No Content status and the given message.
+//
+// Parameters:
+//   - c: The Gin context for the current request.
+//   - message: The message to be included in the response.
+func HandleDeleted(c *gin.Context, message string) {
+	c.JSON(http.StatusNoContent, gin.H{"message": message})
+}
+
 // HandleError sends a JSON response with the given status code and error message.
 //
 // Parameters:
@@ -47,6 +74,15 @@ func HandleNotFound(c *gin.Context, message string) {
 //   - message: The error message to be included in the response.
 func HandleUnauthorized(c *gin.Context, message string) {
 	HandleError(c, http.StatusUnauthorized, message)
+}
+
+// HandleForbidden sends a JSON response with a 403 Forbidden status and the given error message.
+//
+// Parameters:
+//   - c: The Gin context for the current request.
+//   - message: The error message to be included in the response.
+func HandleForbidden(c *gin.Context, message string) {
+	HandleError(c, http.StatusForbidden, message)
 }
 
 // SendError handles different types of errors and sends appropriate HTTP responses.
