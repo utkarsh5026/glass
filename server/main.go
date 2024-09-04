@@ -17,5 +17,6 @@ func main() {
 	routes.SetupCourseRoutes(r, db)
 	routes.SetupGradeRoutes(r, db)
 	routes.SetupAssignmentRoutes(r, db)
+	routes.SetupEnrollmentRoutes(r, db)
 	_ = r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
 }

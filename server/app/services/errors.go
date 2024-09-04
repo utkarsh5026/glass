@@ -61,3 +61,14 @@ func DeleteFileFailure(err error) DeleteFileFailureError {
 func (e DeleteFileFailureError) Error() string {
 	return fmt.Errorf("error deleting file: %v", e.err).Error()
 }
+
+type PermissionDeniedError struct {
+}
+
+func PermissionDenied() PermissionDeniedError {
+	return PermissionDeniedError{}
+}
+
+func (e PermissionDeniedError) Error() string {
+	return "permission denied"
+}

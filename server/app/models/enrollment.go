@@ -10,6 +10,10 @@ const (
 	RoleAdmin   Role = "admin"
 )
 
+func (r Role) String() string {
+	return string(r)
+}
+
 type EnrollmentStatus string
 
 const (
