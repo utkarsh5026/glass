@@ -254,3 +254,49 @@ func (s *SubmissionService) GradeSubmission(submissionID, gradedBy uint, score f
 
 	return &grade, nil
 }
+
+// CanSeeSubmission checks if a user has permission to view a specific submission.
+//
+// Parameters:
+//   - userID: The ID of the user attempting to view the submission.
+//   - submissionID: The ID of the submission being accessed.
+//
+// Returns:
+//   - bool: True if the user can see the submission, false otherwise.
+//   - error: An error if the database query fails, nil otherwise.
+//
+// The function allows access if:
+//  1. The user is the owner of the submission.
+//  2. The user is an admin or teacher for the course associated with the submission.
+//
+// Possible errors:
+//   - If the submission is not found in the database.
+//   - If there's an error querying the database for enrollment information.
+func (s *SubmissionService) CanSeeSubmission(userID, submissionID uint) (bool, error) {
+	var submission models.Submission
+	err := s.db.Preload("Assignment.Course").First(&submission, submissionID).Error
+	if err != nil {
+		return false, err
+	}
+
+	if submission.UserID == userID {
+		return true, nil
+	}
+
+	var count int64
+	var enrollment models.Enrollment
+	roles := []string{
+		models.RoleAdmin.String(),
+		models.RoleTeacher.String(),
+	}
+
+	courseId := submission.Assignment.CourseID
+	err = s.db.Model(&enrollment).
+		Where("user_id = ? AND course_id = ? AND role IN ?", userID, courseId, roles).
+		Count(&count).Error
+	if err != nil {
+		return false, err
+	}
+
+	return count > 0, nil
+}
