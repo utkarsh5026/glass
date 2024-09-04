@@ -122,9 +122,9 @@ func (h *UserHandler) ChangePassword(c *gin.Context) {
 		return
 	}
 
-	old := passwordData.OldPassword
-	new := passwordData.NewPassword
-	if err := h.serv.ChangePassword(userID.(uint), old, new); err != nil {
+	oldP := passwordData.OldPassword
+	newP := passwordData.NewPassword
+	if err := h.serv.ChangePassword(userID.(uint), oldP, newP); err != nil {
 		HandleBadRequest(c, err.Error())
 		return
 	}
