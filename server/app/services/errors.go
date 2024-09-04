@@ -72,3 +72,15 @@ func PermissionDenied() PermissionDeniedError {
 func (e PermissionDeniedError) Error() string {
 	return "permission denied"
 }
+
+type CannotPerformActionError struct {
+	action string
+}
+
+func CannotPerformAction(action string) CannotPerformActionError {
+	return CannotPerformActionError{action: action}
+}
+
+func (e CannotPerformActionError) Error() string {
+	return fmt.Sprintf("cannot perform action: %v", e.action)
+}
