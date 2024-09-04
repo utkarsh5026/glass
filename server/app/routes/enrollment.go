@@ -19,5 +19,6 @@ func SetupEnrollmentRoutes(r *gin.Engine, db *gorm.DB) {
 		enrollmentRoutes.POST("/join", enrollmentHandler.JoinCourseByCode)
 		enrollmentRoutes.PUT("/approve/:id", enrollmentHandler.EnrollToCourse)
 		enrollmentRoutes.PUT("/reject/:id", enrollmentHandler.RejectEnrollment)
+		enrollmentRoutes.GET("/course/:courseId", enrollmentHandler.GetPendingEnrollments)
 	}
 }
