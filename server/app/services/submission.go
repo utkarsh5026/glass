@@ -187,16 +187,26 @@ func (s *SubmissionService) DeleteSubmission(submissionID uint) error {
 	}
 
 	return s.db.Transaction(func(tx *gorm.DB) error {
+		files := make([]models.BaseFile, len(sub.Files))
 		for _, file := range sub.Files {
-			if err := s.firestore.DeleteFile(file.FileName); err != nil {
-				return err
-			}
+			files = append(files, file.BaseFile)
+		}
+
+		if err := DeleteFiles(s.firestore, files); err != nil {
+			return err
+		}
+
+		for _, file := range sub.Files {
 			if err := tx.Delete(&file).Error; err != nil {
 				return DeleteEntityFailure(err)
 			}
 		}
 
-		return tx.Delete(sub).Error
+		if err := tx.Delete(sub).Error; err != nil {
+			return DeleteEntityFailure(err)
+		}
+
+		return nil
 	})
 }
 
