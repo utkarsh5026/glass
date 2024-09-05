@@ -117,6 +117,14 @@ func SendError(err error, c *gin.Context) {
 	}
 }
 
+// ParseFiles parses the files from the multipart form.
+//
+// Parameters:
+//   - c: The Gin context for the current request.
+//
+// Returns:
+//   - []*multipart.FileHeader: A slice of FileHeader pointers representing the files.
+//   - error: An error if the parsing fails, nil otherwise.
 func ParseFiles(c *gin.Context) ([]*multipart.FileHeader, error) {
 	form, err := c.MultipartForm()
 	if err != nil {
