@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"errors"
+	"mime/multipart"
 	"net/http"
 	"server/app/services"
 
@@ -114,4 +115,13 @@ func SendError(err error, c *gin.Context) {
 	default:
 		HandleError(c, http.StatusInternalServerError, "an error occurred")
 	}
+}
+
+func ParseFiles(c *gin.Context) ([]*multipart.FileHeader, error) {
+	form, err := c.MultipartForm()
+	if err != nil {
+		return nil, err
+	}
+
+	return form.File["files"], nil
 }
