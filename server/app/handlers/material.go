@@ -81,13 +81,12 @@ func (h *MaterialHandler) CreateMaterial(c *gin.Context) {
 		return
 	}
 
-	form, err := c.MultipartForm()
+	files, err := ParseFiles(c)
 	if err != nil {
-		HandleBadRequest(c, FailedToParseMultipartForm)
+		HandleBadRequest(c, err.Error())
 		return
 	}
 
-	files := form.File["files"]
 	if len(files) != len(material.Files) {
 		HandleBadRequest(c, "No files uploaded")
 		return
@@ -142,16 +141,16 @@ func (h *MaterialHandler) UpdateMaterial(c *gin.Context) {
 	material.Title = updateData.Title
 	material.Description = updateData.Description
 
-	form, err := c.MultipartForm()
+	filesToAdd, err := ParseFiles(c)
 	if err != nil {
-		HandleBadRequest(c, FailedToParseMultipartForm)
+		HandleBadRequest(c, err.Error())
 		return
 	}
 
-	filesToAdd := form.File["files"]
 	filesToRemove := updateData.RemoveFiles
 
-	if err := h.serv.UpdateMaterial(material, filesToAdd, filesToRemove); err != nil {
+	err = h.serv.UpdateMaterial(material, filesToAdd, filesToRemove)
+	if err != nil {
 		SendError(err, c)
 		return
 	}
