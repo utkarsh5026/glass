@@ -22,9 +22,9 @@ func NewGradeHandler(serv *services.GradeService) *GradeHandler {
 // The grade is created by the authenticated user (gradedBy).
 func (h *GradeHandler) Create(c *gin.Context) {
 	var input struct {
-		SubmissionID uint   `json:"submissionId" binding:"required"`
-		PointsEarned int    `json:"pointsEarned" binding:"required"`
-		Feedback     string `json:"feedback"`
+		SubmissionID uint    `json:"submissionId" binding:"required"`
+		PointsEarned float64 `json:"pointsEarned" binding:"required"`
+		Feedback     string  `json:"feedback"`
 	}
 
 	if err := c.ShouldBindJSON(&input); err != nil {
@@ -72,8 +72,8 @@ func (h *GradeHandler) UpdateGrade(c *gin.Context) {
 	}
 
 	var input struct {
-		PointsEarned int    `json:"pointsEarned" binding:"required"`
-		Feedback     string `json:"feedback"`
+		PointsEarned float64 `json:"pointsEarned" binding:"required"`
+		Feedback     string  `json:"feedback"`
 	}
 
 	if err := c.ShouldBindJSON(&input); err != nil {

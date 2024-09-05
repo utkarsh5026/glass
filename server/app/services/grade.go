@@ -32,7 +32,7 @@ type GradeStats struct {
 // Returns:
 //   - *models.Grade: A pointer to the newly created grade, or nil if there was an error.
 //   - error: An error if the creation operation failed, or nil if successful.
-func (s *GradeService) Create(subId, graderId uint, pointsEarned int, feedback string) (*models.Grade, error) {
+func (s *GradeService) Create(subId, graderId uint, pointsEarned float64, feedback string) (*models.Grade, error) {
 	grade := models.Grade{
 		SubmissionID: subId,
 		GradedBy:     graderId,
@@ -88,7 +88,7 @@ func (s *GradeService) Get(gradeID uint) (*models.Grade, error) {
 // Returns:
 //   - *models.Grade: A pointer to the updated grade, or nil if there was an error.
 //   - error: An error if the update operation failed, or nil if successful.
-func (s *GradeService) Update(gradeID uint, pointsEarned int, feedback string) (*models.Grade, error) {
+func (s *GradeService) Update(gradeID uint, pointsEarned float64, feedback string) (*models.Grade, error) {
 	var grade models.Grade
 	err := s.db.Transaction(func(tx *gorm.DB) error {
 		if err := tx.First(&grade, gradeID).Error; err != nil {
