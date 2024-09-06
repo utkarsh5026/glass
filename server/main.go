@@ -35,5 +35,7 @@ func main() {
 	routes.SetupAssignmentRoutes(r, db)
 	routes.SetupEnrollmentRoutes(r, db)
 	routes.SetupSubmissionRoutes(r, db, cs)
+	routes.SetupMaterialRoutes(r, db, cs)
+	routes.SetupQuizRoutes(r, db, secret)
 	_ = r.Run()
 }
