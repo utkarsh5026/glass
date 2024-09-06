@@ -1,4 +1,5 @@
 import axios, { AxiosInstance, AxiosRequestConfig } from "axios";
+import store from "../store/store";
 
 const baseURL = "http://localhost:8080/api";
 
@@ -9,6 +10,19 @@ const axiosInstance: AxiosInstance = axios.create({
     "Content-Type": "application/json",
   },
 });
+
+axiosInstance.interceptors.request.use(
+  (config) => {
+    const state = store.getState();
+    const token = state.auth.token;
+    if (token) {
+      config.headers["Authorization"] = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) =>
+    Promise.reject(error instanceof Error ? error : new Error(String(error)))
+);
 
 export const apiCall = async <T>(config: AxiosRequestConfig): Promise<T> => {
   try {
