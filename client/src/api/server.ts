@@ -3,6 +3,11 @@ import store from "../store/store";
 
 const baseURL = "http://localhost:8080/api";
 
+/**
+ * Creates an Axios instance with predefined configuration.
+ * @constant
+ * @type {AxiosInstance}
+ */
 const axiosInstance: AxiosInstance = axios.create({
   baseURL,
   timeout: 10000, // 10 seconds
@@ -11,6 +16,9 @@ const axiosInstance: AxiosInstance = axios.create({
   },
 });
 
+/**
+ * Intercepts requests to add authorization token if available.
+ */
 axiosInstance.interceptors.request.use(
   (config) => {
     const state = store.getState();
@@ -24,6 +32,13 @@ axiosInstance.interceptors.request.use(
     Promise.reject(error instanceof Error ? error : new Error(String(error)))
 );
 
+/**
+ * Makes an API call using the configured Axios instance.
+ * @template T - The expected type of the response data.
+ * @param {AxiosRequestConfig} config - The configuration for the API request.
+ * @returns {Promise<T>} A promise that resolves with the response data.
+ * @throws {Error} Throws an error if the API call fails.
+ */
 export const apiCall = async <T>(config: AxiosRequestConfig): Promise<T> => {
   try {
     const response = await axiosInstance(config);
