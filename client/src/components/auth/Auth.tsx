@@ -57,6 +57,15 @@ const WelcomeText = styled(Title)`
   margin-bottom: 2rem;
 `;
 
+/**
+ * Auth component for handling user authentication (sign up and sign in).
+ *
+ * This component renders a two-panel layout with authentication form on the left
+ * and welcome message with feature list on the right. It uses custom hooks for
+ * authentication logic and Framer Motion for animations.
+ *
+ * @component
+ */
 const Auth: React.FC = () => {
   const { isSignUp, isLoading, error, onFinish, toggleAuthMode } = useAuth();
 

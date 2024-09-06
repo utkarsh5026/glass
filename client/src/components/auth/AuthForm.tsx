@@ -42,12 +42,26 @@ interface AuthFormProps {
   onFinish: (values: unknown) => void;
 }
 
+/**
+ * AuthForm component for handling user authentication (sign up and sign in).
+ *
+ * This component renders a form with fields for email and password,
+ * and additional fields for first name, last name, and password confirmation when in sign up mode.
+ * It uses Ant Design components for form elements and Framer Motion for animations.
+ *
+ * @component
+ * @param {Object} props - The component props
+ * @param {boolean} props.isSignUp - Determines whether the form is in sign up or sign in mode
+ * @param {boolean} props.isLoading - Indicates if the form submission is in progress
+ * @param {function} props.onFinish - Callback function to be called when the form is submitted
+ */
 const AuthForm: React.FC<AuthFormProps> = ({
   isSignUp,
   isLoading,
   onFinish,
 }) => {
   const [form] = Form.useForm();
+
   return (
     <StyledForm
       form={form}
