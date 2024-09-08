@@ -1,5 +1,4 @@
 import axios, { AxiosInstance, AxiosRequestConfig } from "axios";
-import store from "../store/store";
 
 const baseURL = "http://localhost:8080/api";
 
@@ -10,27 +9,21 @@ const baseURL = "http://localhost:8080/api";
  */
 const axiosInstance: AxiosInstance = axios.create({
   baseURL,
-  timeout: 10000, // 10 seconds
+  timeout: 10000,
   headers: {
     "Content-Type": "application/json",
   },
 });
 
 /**
- * Intercepts requests to add authorization token if available.
+ * Adds an authorization token to the request headers if available.
+ * @param {string | null} token - The authorization token.
  */
-axiosInstance.interceptors.request.use(
-  (config) => {
-    const state = store.getState();
-    const token = state.auth.token;
-    if (token) {
-      config.headers["Authorization"] = `Bearer ${token}`;
-    }
-    return config;
-  },
-  (error) =>
-    Promise.reject(error instanceof Error ? error : new Error(String(error)))
-);
+export const setAuthToken = (token: string | null) => {
+  if (token)
+    axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+  else delete axiosInstance.defaults.headers.common["Authorization"];
+};
 
 /**
  * Makes an API call using the configured Axios instance.

@@ -1,8 +1,9 @@
 import { configureStore } from "@reduxjs/toolkit";
 import mentorReducer from "./people/mentorSlice";
 import studentReducer from "./people/studentSlice";
-import assignmentReducer from "./activity/assignmentSlice";
 import authReducer from "./auth/authSlice";
+import assignmentReducer from "./assignments/slice";
+import dashboardReducer from "./dasboard/slice";
 
 const store = configureStore({
   reducer: {
@@ -10,6 +11,7 @@ const store = configureStore({
     students: studentReducer,
     assignments: assignmentReducer,
     auth: authReducer,
+    dashboard: dashboardReducer,
   },
 });
 
