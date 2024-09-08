@@ -6,14 +6,6 @@ import (
 	"gorm.io/gorm"
 )
 
-type FileExtension string
-
-const (
-	FileExtensionPDF  FileExtension = "pdf"
-	FileExtensionDOCX FileExtension = "docx"
-	FileExtensionTXT  FileExtension = "txt"
-)
-
 type Assignment struct {
 	gorm.Model
 	CourseID              uint         `json:"courseId" gorm:"not null"`
