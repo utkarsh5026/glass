@@ -5,6 +5,7 @@ import (
 	"mime/multipart"
 	"net/http"
 	"server/app/services"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -132,4 +133,21 @@ func ParseFiles(c *gin.Context) ([]*multipart.FileHeader, error) {
 	}
 
 	return form.File["files"], nil
+}
+
+// GetParamUint parses the parameter with the given key as a uint.
+//
+// Parameters:
+//   - c: The Gin context for the current request.
+//   - key: The key of the parameter to be parsed.
+//
+// Returns:
+//   - uint: The parsed uint value.
+func GetParamUint(c *gin.Context, key string) (uint, error) {
+	param, err := strconv.ParseUint(c.Param(key), 10, 32)
+	if err != nil {
+		return 0, err
+	}
+
+	return uint(param), nil
 }
