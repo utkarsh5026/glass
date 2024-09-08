@@ -23,15 +23,26 @@ func NewAssignmentHandler(assignmentService *services.AssignmentService) *Assign
 
 // Create handles the creation of a new assignment.
 // It expects a JSON payload representing the assignment details.
+//
+// Method: POST
+// Route: /assignments
+//
+// Parameters:
+//   - c: The Gin context for the current request.
+//
+// Returns:
+//   - 201 Created: Returns the created assignment as JSON.
+//   - 400 Bad Request: If the JSON payload is invalid.
+//   - 500 Internal Server Error: If there's an error creating the assignment.
 func (h *AssignmentHandler) Create(c *gin.Context) {
 	var assignment models.Assignment
 	if err := c.ShouldBindJSON(&assignment); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		HandleBadRequest(c, err.Error())
 		return
 	}
 
 	if err := h.serv.Create(&assignment); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create assignment"})
+		HandleError(c, http.StatusInternalServerError, "Failed to create assignment")
 		return
 	}
 
@@ -40,16 +51,29 @@ func (h *AssignmentHandler) Create(c *gin.Context) {
 
 // Get retrieves an assignment by its ID.
 // It expects the assignment ID as a URL parameter.
+//
+// Method: GET
+// Route: /assignments/:id
+//
+// Parameters:
+//   - c: The Gin context for the current request.
+//   - id: The ID of the assignment to retrieve (from URL).
+//
+// Returns:
+//   - 200 OK: Returns the assignment as JSON.
+//   - 400 Bad Request: If the assignment ID is invalid.
+//   - 404 Not Found: If the assignment doesn't exist.
+//   - 500 Internal Server Error: If there's an error retrieving the assignment.
 func (h *AssignmentHandler) Get(c *gin.Context) {
-	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
+	id, err := GetParamUint(c, "id")
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid assignment ID"})
+		HandleBadRequest(c, "Invalid assignment ID")
 		return
 	}
 
-	assignment, err := h.serv.Get(uint(id))
+	assignment, err := h.serv.Get(id)
 	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Assignment not found"})
+		SendError(err, c)
 		return
 	}
 
@@ -58,22 +82,35 @@ func (h *AssignmentHandler) Get(c *gin.Context) {
 
 // UpdateAssignment handles the updating of an existing assignment.
 // It expects the assignment ID as a URL parameter and a JSON payload with updated details.
+//
+// Method: PUT
+// Route: /assignments/:id
+//
+// Parameters:
+//   - c: The Gin context for the current request.
+//   - id: The ID of the assignment to update (from URL).
+//
+// Returns:
+//   - 200 OK: Returns the updated assignment as JSON.
+//   - 400 Bad Request: If the assignment ID is invalid or the JSON payload is invalid.
+//   - 404 Not Found: If the assignment doesn't exist.
+//   - 500 Internal Server Error: If there's an error updating the assignment.
 func (h *AssignmentHandler) UpdateAssignment(c *gin.Context) {
-	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
+	id, err := GetParamUint(c, "id")
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid assignment ID"})
+		HandleBadRequest(c, "Invalid assignment ID")
 		return
 	}
 
 	var assignment models.Assignment
 	if err := c.ShouldBindJSON(&assignment); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		HandleBadRequest(c, err.Error())
 		return
 	}
 
-	assignment.ID = uint(id)
+	assignment.ID = id
 	if err := h.serv.Update(&assignment); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update assignment"})
+		SendError(err, c)
 		return
 	}
 
@@ -82,33 +119,58 @@ func (h *AssignmentHandler) UpdateAssignment(c *gin.Context) {
 
 // Delete handles the deletion of an assignment.
 // It expects the assignment ID as a URL parameter.
+//
+// Method: DELETE
+// Route: /assignments/:id
+//
+// Parameters:
+//   - c: The Gin context for the current request.
+//   - id: The ID of the assignment to delete (from URL).
+//
+// Returns:
+//   - 200 OK: If the assignment was successfully deleted.
+//   - 400 Bad Request: If the assignment ID is invalid.
+//   - 404 Not Found: If the assignment doesn't exist.
+//   - 500 Internal Server Error: If there's an error deleting the assignment.
 func (h *AssignmentHandler) Delete(c *gin.Context) {
-	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
+	id, err := GetParamUint(c, "id")
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid assignment ID"})
+		HandleBadRequest(c, "Invalid assignment ID")
 		return
 	}
 
-	if err := h.serv.Delete(uint(id)); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete assignment"})
+	if err := h.serv.Delete(id); err != nil {
+		SendError(err, c)
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "Assignment deleted successfully"})
+	HandleOk(c, "Assignment deleted successfully")
 }
 
 // GetAssignmentsForCourse retrieves all assignments for a specific course.
 // It expects the course ID as a URL parameter.
+//
+// Method: GET
+// Route: /courses/:courseId/assignments
+//
+// Parameters:
+//   - c: The Gin context for the current request.
+//   - courseId: The ID of the course to get assignments for (from URL).
+//
+// Returns:
+//   - 200 OK: Returns a list of assignments as JSON.
+//   - 400 Bad Request: If the course ID is invalid.
+//   - 500 Internal Server Error: If there's an error retrieving the assignments.
 func (h *AssignmentHandler) GetAssignmentsForCourse(c *gin.Context) {
-	courseID, err := strconv.ParseUint(c.Param("courseId"), 10, 32)
+	courseID, err := GetParamUint(c, "courseId")
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid course ID"})
+		HandleBadRequest(c, "Invalid course ID")
 		return
 	}
 
-	assignments, err := h.serv.GetAssignmentsForCourse(uint(courseID))
+	assignments, err := h.serv.GetAssignmentsForCourse(courseID)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve assignments"})
+		SendError(err, c)
 		return
 	}
 
@@ -117,47 +179,84 @@ func (h *AssignmentHandler) GetAssignmentsForCourse(c *gin.Context) {
 
 // PublishAssignment handles the publishing of an assignment.
 // It expects the assignment ID as a URL parameter.
+//
+// Method: POST
+// Route: /assignments/:id/publish
+//
+// Parameters:
+//   - c: The Gin context for the current request.
+//   - id: The ID of the assignment to publish (from URL).
+//
+// Returns:
+//   - 200 OK: If the assignment was successfully published.
+//   - 400 Bad Request: If the assignment ID is invalid.
+//   - 404 Not Found: If the assignment doesn't exist.
+//   - 500 Internal Server Error: If there's an error publishing the assignment.
 func (h *AssignmentHandler) PublishAssignment(c *gin.Context) {
-	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
+	id, err := GetParamUint(c, "id")
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid assignment ID"})
+		HandleBadRequest(c, "Invalid assignment ID")
 		return
 	}
 
-	if err := h.serv.Publish(uint(id)); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to publish assignment"})
+	if err := h.serv.Publish(id); err != nil {
+		SendError(err, c)
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "Assignment published successfully"})
+	HandleOk(c, "Assignment published successfully")
 }
 
 // UnpublishAssignment handles the unpublishing of an assignment.
 // It expects the assignment ID as a URL parameter.
+//
+// Method: POST
+// Route: /assignments/:id/unpublish
+//
+// Parameters:
+//   - c: The Gin context for the current request.
+//   - id: The ID of the assignment to unpublish (from URL).
+//
+// Returns:
+//   - 200 OK: If the assignment was successfully unpublished.
+//   - 400 Bad Request: If the assignment ID is invalid.
+//   - 404 Not Found: If the assignment doesn't exist.
+//   - 500 Internal Server Error: If there's an error unpublishing the assignment.
 func (h *AssignmentHandler) UnpublishAssignment(c *gin.Context) {
-	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
+	id, err := GetParamUint(c, "id")
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid assignment ID"})
+		HandleBadRequest(c, "Invalid assignment ID")
 		return
 	}
 
-	if err := h.serv.Unpublish(uint(id)); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to unpublish assignment"})
+	if err := h.serv.Unpublish(id); err != nil {
+		SendError(err, c)
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "Assignment unpublished successfully"})
+	HandleOk(c, "Assignment unpublished successfully")
 }
 
 // GetUpcomingAssignments retrieves upcoming assignments for a user.
 // It expects the user ID from the context and an optional limit query parameter.
+//
+// Method: GET
+// Route: /assignments/upcoming
+//
+// Parameters:
+//   - c: The Gin context for the current request.
+//   - limit: Optional query parameter to limit the number of assignments returned (default: 5).
+//
+// Returns:
+//   - 200 OK: Returns a list of upcoming assignments as JSON.
+//   - 500 Internal Server Error: If there's an error retrieving the assignments.
 func (h *AssignmentHandler) GetUpcomingAssignments(c *gin.Context) {
-	userID := c.GetUint("userID") // Assuming you have middleware to extract user ID from token
+	userID := GetUserID(c)
 	limit, _ := strconv.Atoi(c.DefaultQuery("limit", "5"))
 
 	assignments, err := h.serv.GetUpcomingAssignments(userID, limit)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve upcoming assignments"})
+		SendError(err, c)
 		return
 	}
 
@@ -166,12 +265,22 @@ func (h *AssignmentHandler) GetUpcomingAssignments(c *gin.Context) {
 
 // GetOverdueAssignments retrieves overdue assignments for a user.
 // It expects the user ID from the context.
+//
+// Method: GET
+// Route: /assignments/overdue
+//
+// Parameters:
+//   - c: The Gin context for the current request.
+//
+// Returns:
+//   - 200 OK: Returns a list of overdue assignments as JSON.
+//   - 500 Internal Server Error: If there's an error retrieving the assignments.
 func (h *AssignmentHandler) GetOverdueAssignments(c *gin.Context) {
-	userID := c.GetUint("userID") // Assuming you have middleware to extract user ID from token
+	userID := GetUserID(c)
 
 	assignments, err := h.serv.GetOverdueAssignments(userID)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve overdue assignments"})
+		SendError(err, c)
 		return
 	}
 
@@ -180,16 +289,29 @@ func (h *AssignmentHandler) GetOverdueAssignments(c *gin.Context) {
 
 // GetAssignmentCompletion retrieves the completion status of an assignment.
 // It expects the assignment ID as a URL parameter.
+//
+// Method: GET
+// Route: /assignments/:id/completion
+//
+// Parameters:
+//   - c: The Gin context for the current request.
+//   - id: The ID of the assignment to get completion status for (from URL).
+//
+// Returns:
+//   - 200 OK: Returns the completion status as JSON.
+//   - 400 Bad Request: If the assignment ID is invalid.
+//   - 404 Not Found: If the assignment doesn't exist.
+//   - 500 Internal Server Error: If there's an error retrieving the completion status.
 func (h *AssignmentHandler) GetAssignmentCompletion(c *gin.Context) {
-	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
+	id, err := GetParamUint(c, "id")
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid assignment ID"})
+		HandleBadRequest(c, "Invalid assignment ID")
 		return
 	}
 
-	completion, err := h.serv.GetAssignmentCompletion(uint(id))
+	completion, err := h.serv.GetAssignmentCompletion(id)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve assignment completion"})
+		SendError(err, c)
 		return
 	}
 
