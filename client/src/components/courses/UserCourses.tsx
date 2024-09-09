@@ -39,12 +39,26 @@ const CoverImage = styled.div<{ svgContent: string }>`
   border-radius: 8px 8px 0 0;
 `;
 
+/**
+ * Generates a random dark-themed SVG for course card backgrounds.
+ * @returns {string} An SVG string with random shapes and colors.
+ */
 const generateDarkSVG = () => {
+  /**
+   * Generates a random HSL color.
+   * @param {number} saturation - The saturation percentage.
+   * @param {number} lightness - The lightness percentage.
+   * @returns {string} An HSL color string.
+   */
   const getRandomColor = (saturation: number, lightness: number) => {
     const hue = Math.floor(Math.random() * 360);
     return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
   };
 
+  /**
+   * Generates a random SVG shape.
+   * @returns {string} An SVG shape element as a string.
+   */
   const getRandomShape = () => {
     const shapes = [
       `<circle cx="${50 + Math.random() * 20 - 10}" cy="${
@@ -85,6 +99,10 @@ const generateDarkSVG = () => {
   `;
 };
 
+/**
+ * UserCourses component displays a list of courses for the user.
+ * It fetches courses from the Redux store and renders them in a grid layout.
+ */
 const UserCourses: React.FC = () => {
   const dispatch = useAppDispatch();
   const { courses, loading, error } = useAppSelector((state) => state.courses);
