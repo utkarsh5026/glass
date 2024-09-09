@@ -18,6 +18,17 @@ export interface FilterState {
   isActive: boolean;
 }
 
+/**
+ * CourseSearchAndFilters component provides a search input and filter options for courses.
+ *
+ * @component
+ * @param {Object} props - The component props
+ * @param {function} props.onSearch - Callback function triggered when a search is performed
+ * @param {function} props.onFilterChange - Callback function triggered when filters are changed
+ * @param {string[]} props.categories - Array of available course categories
+ *
+ * @returns {React.FC} A React component with search and filter functionality
+ */
 const CourseSearchAndFilters: React.FC<CourseSearchAndFiltersProps> = ({
   onSearch,
   onFilterChange,
@@ -30,6 +41,11 @@ const CourseSearchAndFilters: React.FC<CourseSearchAndFiltersProps> = ({
     isActive: true,
   });
 
+  /**
+   * Handles changes in filter options
+   *
+   * @param {Partial<FilterState>} newFilters - The updated filter options
+   */
   const handleFilterChange = (newFilters: Partial<FilterState>) => {
     const updatedFilters = { ...filters, ...newFilters };
     setFilters(updatedFilters);
