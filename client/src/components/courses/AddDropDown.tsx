@@ -7,31 +7,61 @@ import {
   PlusOutlined,
   CarryOutFilled,
 } from "@ant-design/icons";
-
-const items: MenuProps["items"] = [
-  {
-    key: "1",
-    label: "Announcement",
-    icon: <SoundOutlined />,
-  },
-  {
-    key: "2",
-    label: "Assignment",
-    icon: <CarryOutFilled />,
-  },
-  {
-    key: "3",
-    label: "Material",
-    icon: <FileOutlined />,
-  },
-  {
-    key: "4",
-    label: "Quiz",
-    icon: <EditOutlined />,
-  },
-];
+import { useNavigate } from "react-router-dom";
 
 const AddDropDown: React.FC = () => {
+  const navigate = useNavigate();
+  const handleMenuClick = (key: string) => {
+    let compType: string;
+    switch (key) {
+      case "1":
+        compType = "announcement";
+        break;
+      case "2":
+        compType = "assignment";
+        break;
+      case "3":
+        compType = "material";
+        break;
+      case "4":
+        compType = "quiz";
+        break;
+      default:
+        compType = "course";
+    }
+    navigate("/courses/create", {
+      state: {
+        compType: compType,
+      },
+    });
+  };
+
+  const items: MenuProps["items"] = [
+    {
+      key: "1",
+      label: "Announcement",
+      icon: <SoundOutlined />,
+      onClick: () => handleMenuClick("1"),
+    },
+    {
+      key: "2",
+      label: "Assignment",
+      icon: <CarryOutFilled />,
+      onClick: () => handleMenuClick("2"),
+    },
+    {
+      key: "3",
+      label: "Material",
+      icon: <FileOutlined />,
+      onClick: () => handleMenuClick("3"),
+    },
+    {
+      key: "4",
+      label: "Quiz",
+      icon: <EditOutlined />,
+      onClick: () => handleMenuClick("4"),
+    },
+  ];
   return (
     <Dropdown menu={{ items }}>
       <Button icon={<PlusOutlined />} type="primary">

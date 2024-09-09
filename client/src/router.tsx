@@ -1,11 +1,13 @@
 import { createBrowserRouter } from "react-router-dom";
+import { Suspense } from "react";
+import { Spin } from "antd";
 import Auth from "./components/auth/Auth";
 import NotFound from "./components/error/NotFound";
 import Dashboard from "./components/dashboard/Dashboard";
 import UserCourses from "./components/courses/list/UserCourses";
 import CourseOverview from "./components/courses/CourseOverview";
-import { Suspense } from "react";
-import { Spin } from "antd";
+
+import CreateCourseComponent from "./components/courses/create/CreateCourseComponent";
 
 export const router = createBrowserRouter([
   {
@@ -29,6 +31,14 @@ export const router = createBrowserRouter([
     element: (
       <Suspense fallback={<Spin size="large" />}>
         <UserCourses />
+      </Suspense>
+    ),
+  },
+  {
+    path: "/courses/create",
+    element: (
+      <Suspense fallback={<Spin size="large" />}>
+        <CreateCourseComponent />
       </Suspense>
     ),
   },
