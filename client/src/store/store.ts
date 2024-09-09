@@ -4,6 +4,7 @@ import studentReducer from "./people/studentSlice";
 import authReducer from "./auth/authSlice";
 import assignmentReducer from "./assignments/slice";
 import dashboardReducer from "./dasboard/slice";
+import coursesReducer from "./courses/slice";
 
 const store = configureStore({
   reducer: {
@@ -12,6 +13,7 @@ const store = configureStore({
     assignments: assignmentReducer,
     auth: authReducer,
     dashboard: dashboardReducer,
+    courses: coursesReducer,
   },
 });
 

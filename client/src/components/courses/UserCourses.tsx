@@ -1,0 +1,150 @@
+import React, { useEffect } from "react";
+import { Card, Row, Col, Typography, Space, Tag } from "antd";
+import styled from "styled-components";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import {
+  BookOutlined,
+  CalendarOutlined,
+  TeamOutlined,
+} from "@ant-design/icons";
+import type { Course } from "../../store/courses/types";
+import { fetchUserCourses } from "../../store/courses/slice";
+
+const { Title, Text } = Typography;
+const { Meta } = Card;
+
+const StyledCard = styled(Card)`
+  margin-bottom: 16px;
+  transition: all 0.3s;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+
+  &:hover {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    transform: translateY(-4px);
+  }
+`;
+
+const CourseTitle = styled(Title)`
+  margin-bottom: 0 !important;
+`;
+
+const CoverImage = styled.div<{ svgContent: string }>`
+  height: 200px;
+  background-image: url("data:image/svg+xml,${(props) =>
+    encodeURIComponent(props.svgContent)}");
+  background-size: cover;
+  background-position: center;
+  border-radius: 8px 8px 0 0;
+`;
+
+const generateDarkSVG = () => {
+  const getRandomColor = (saturation: number, lightness: number) => {
+    const hue = Math.floor(Math.random() * 360);
+    return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+  };
+
+  const getRandomShape = () => {
+    const shapes = [
+      `<circle cx="${50 + Math.random() * 20 - 10}" cy="${
+        50 + Math.random() * 20 - 10
+      }" r="${20 + Math.random() * 20}" />`,
+      `<rect x="${10 + Math.random() * 20}" y="${
+        10 + Math.random() * 20
+      }" width="${60 + Math.random() * 20}" height="${
+        60 + Math.random() * 20
+      }" />`,
+      `<polygon points="${50 + Math.random() * 20 - 10},${
+        10 + Math.random() * 10
+      } ${90 + Math.random() * 10},${90 + Math.random() * 10} ${
+        10 + Math.random() * 10
+      },${90 + Math.random() * 10}" />`,
+    ];
+    return shapes[Math.floor(Math.random() * shapes.length)];
+  };
+
+  const bgColor = getRandomColor(30, 15); // Dark background
+  const shapeColor = getRandomColor(70, 60); // Brighter shape color
+
+  const shapes = Array(5)
+    .fill(null)
+    .map(
+      () =>
+        `<g fill="${shapeColor}" opacity="${0.1 + Math.random() * 0.2}">
+      ${getRandomShape()}
+    </g>`
+    )
+    .join("");
+
+  return `
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+      <rect width="100" height="100" fill="${bgColor}" />
+      ${shapes}
+    </svg>
+  `;
+};
+
+const UserCourses: React.FC = () => {
+  const dispatch = useAppDispatch();
+  const { courses, loading, error } = useAppSelector((state) => state.courses);
+
+  useEffect(() => {
+    const not = false;
+    if (not) dispatch(fetchUserCourses());
+  }, [dispatch]);
+
+  if (loading) {
+    return <div>Loading courses...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
+
+  return (
+    <div>
+      <Title level={2} style={{ marginBottom: "24px" }}>
+        My Courses
+      </Title>
+      <Row gutter={[16, 16]}>
+        {courses.map((course: Course) => (
+          <Col xs={24} sm={24} md={12} lg={12} xl={12} key={course.id}>
+            <StyledCard
+              cover={<CoverImage svgContent={generateDarkSVG()} />}
+              style={{
+                cursor: "pointer",
+              }}
+            >
+              <Meta
+                title={<CourseTitle level={4}>{course.name}</CourseTitle>}
+                description={
+                  <Space direction="vertical" size="small">
+                    <Text type="secondary">{course.description}</Text>
+                    <Space>
+                      <Tag icon={<BookOutlined />} color="blue">
+                        {course.category}
+                      </Tag>
+                      <Tag icon={<CalendarOutlined />} color="green">
+                        {course.startDate} - {course.endDate}
+                      </Tag>
+                      <Tag icon={<TeamOutlined />} color="orange">
+                        {course.maxStudents} students max
+                      </Tag>
+                    </Space>
+                    <Text>Difficulty: {course.difficulty}</Text>
+                    <Text>
+                      Status: {course.isActive ? "Active" : "Inactive"}
+                    </Text>
+                  </Space>
+                }
+              />
+            </StyledCard>
+          </Col>
+        ))}
+      </Row>
+    </div>
+  );
+};
+
+export default UserCourses;
