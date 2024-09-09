@@ -9,7 +9,7 @@ import {
 } from "@ant-design/icons";
 import type { Course } from "../../store/courses/types";
 import { fetchUserCourses } from "../../store/courses/slice";
-import CourseSearchAndFilters from "./SearchFilter";
+import CourseSearchAndFilters, { FilterState } from "./SearchFilter";
 
 const { Title, Text } = Typography;
 const { Meta } = Card;
@@ -35,36 +35,31 @@ const UserCourses: React.FC = () => {
 
   const handleSearch = (value: string) => {
     setSearch(value);
-    filterCourses(value, {});
+    filterCourses(value, null);
   };
 
-  const handleFilterChange = (filters: {
-    category: string;
-    difficulty: [number, number];
-    isActive: boolean;
-  }) => {
+  const handleFilterChange = (filters: FilterState) =>
     filterCourses(search, filters);
-  };
 
-  const filterCourses = (search: string, filters: any) => {
+  const filterCourses = (search: string, filters: FilterState | null) => {
     let filtered = courses.filter((course) =>
       course.name.toLowerCase().includes(search.toLowerCase())
     );
 
-    if (filters.category && filters.category !== "All") {
+    if (filters != null) {
+      if (filters.category && filters.category !== "All") {
+        filtered = filtered.filter(
+          (course) => course.category === filters.category
+        );
+      }
+
       filtered = filtered.filter(
-        (course) => course.category === filters.category
+        (course) => course.difficulty === filters.difficulty
       );
+
+      if (filters.isActive)
+        filtered = filtered.filter((course) => course.isActive);
     }
-
-    filtered = filtered.filter(
-      (course) =>
-        course.difficulty >= filters.difficulty[0] &&
-        course.difficulty <= filters.difficulty[1]
-    );
-
-    if (filters.isActive)
-      filtered = filtered.filter((course) => course.isActive);
 
     setFilteredCourses(filtered);
   };

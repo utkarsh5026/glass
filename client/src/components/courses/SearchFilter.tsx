@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Input, Button, Drawer, Space, Select, Slider, Switch } from "antd";
+import { Input, Button, Drawer, Space, Select, Switch } from "antd";
 import { SearchOutlined, FilterOutlined } from "@ant-design/icons";
 import styled from "styled-components";
 
@@ -12,9 +12,9 @@ interface CourseSearchAndFiltersProps {
   categories: string[];
 }
 
-interface FilterState {
+export interface FilterState {
   category: string;
-  difficulty: [number, number];
+  difficulty: string;
   isActive: boolean;
 }
 
@@ -26,7 +26,7 @@ const CourseSearchAndFilters: React.FC<CourseSearchAndFiltersProps> = ({
   const [isFilterVisible, setIsFilterVisible] = useState(false);
   const [filters, setFilters] = useState<FilterState>({
     category: "All",
-    difficulty: [1, 5],
+    difficulty: "All",
     isActive: true,
   });
 
@@ -77,16 +77,16 @@ const CourseSearchAndFilters: React.FC<CourseSearchAndFiltersProps> = ({
 
           <div>
             <h4>Difficulty</h4>
-            <Slider
-              range
-              min={1}
-              max={5}
+            <Select
+              style={{ width: "100%" }}
               value={filters.difficulty}
-              onChange={(value: number | number[]) =>
-                handleFilterChange({ difficulty: value as [number, number] })
-              }
-              marks={{ 1: "1", 2: "2", 3: "3", 4: "4", 5: "5" }}
-            />
+              onChange={(value) => handleFilterChange({ difficulty: value })}
+            >
+              <Option value="All">All Difficulties</Option>
+              <Option value="Easy">Easy</Option>
+              <Option value="Medium">Medium</Option>
+              <Option value="Hard">Hard</Option>
+            </Select>
           </div>
 
           <div>
