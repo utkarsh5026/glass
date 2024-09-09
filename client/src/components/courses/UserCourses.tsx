@@ -156,7 +156,7 @@ const generateDarkSVG = () => {
    * @param {number} lightness - The lightness percentage.
    * @returns {string} An HSL color string.
    */
-  const getRandomColor = (saturation: number, lightness: number) => {
+  const getRandomColor = (saturation: number, lightness: number): string => {
     const hue = Math.floor(Math.random() * 360);
     return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
   };
@@ -165,7 +165,7 @@ const generateDarkSVG = () => {
    * Generates a random SVG shape.
    * @returns {string} An SVG shape element as a string.
    */
-  const getRandomShape = () => {
+  const getRandomShape = (): string => {
     const shapes = [
       `<circle cx="${50 + Math.random() * 20 - 10}" cy="${
         50 + Math.random() * 20 - 10
