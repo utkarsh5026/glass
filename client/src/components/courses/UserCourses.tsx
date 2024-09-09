@@ -13,6 +13,72 @@ import { fetchUserCourses } from "../../store/courses/slice";
 const { Title, Text } = Typography;
 const { Meta } = Card;
 
+/**
+ * UserCourses component displays a list of courses for the user.
+ * It fetches courses from the Redux store and renders them in a grid layout.
+ */
+const UserCourses: React.FC = () => {
+  const dispatch = useAppDispatch();
+  const { courses, loading, error } = useAppSelector((state) => state.courses);
+
+  useEffect(() => {
+    const not = false;
+    if (not) dispatch(fetchUserCourses());
+  }, [dispatch]);
+
+  if (loading) {
+    return <div>Loading courses...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
+
+  return (
+    <div>
+      <Title level={2} style={{ marginBottom: "24px" }}>
+        My Courses
+      </Title>
+      <Row gutter={[16, 16]}>
+        {courses.map((course: Course) => (
+          <Col xs={24} sm={24} md={12} lg={12} xl={12} key={course.id}>
+            <StyledCard
+              cover={<CoverImage svgContent={generateDarkSVG()} />}
+              style={{
+                cursor: "pointer",
+              }}
+            >
+              <Meta
+                title={<CourseTitle level={4}>{course.name}</CourseTitle>}
+                description={
+                  <Space direction="vertical" size="small">
+                    <Text type="secondary">{course.description}</Text>
+                    <Space>
+                      <Tag icon={<BookOutlined />} color="blue">
+                        {course.category}
+                      </Tag>
+                      <Tag icon={<CalendarOutlined />} color="green">
+                        {course.startDate} - {course.endDate}
+                      </Tag>
+                      <Tag icon={<TeamOutlined />} color="orange">
+                        {course.maxStudents} students max
+                      </Tag>
+                    </Space>
+                    <Text>Difficulty: {course.difficulty}</Text>
+                    <Text>
+                      Status: {course.isActive ? "Active" : "Inactive"}
+                    </Text>
+                  </Space>
+                }
+              />
+            </StyledCard>
+          </Col>
+        ))}
+      </Row>
+    </div>
+  );
+};
+
 const StyledCard = styled(Card)`
   margin-bottom: 16px;
   transition: all 0.3s;
@@ -97,72 +163,6 @@ const generateDarkSVG = () => {
       ${shapes}
     </svg>
   `;
-};
-
-/**
- * UserCourses component displays a list of courses for the user.
- * It fetches courses from the Redux store and renders them in a grid layout.
- */
-const UserCourses: React.FC = () => {
-  const dispatch = useAppDispatch();
-  const { courses, loading, error } = useAppSelector((state) => state.courses);
-
-  useEffect(() => {
-    const not = false;
-    if (not) dispatch(fetchUserCourses());
-  }, [dispatch]);
-
-  if (loading) {
-    return <div>Loading courses...</div>;
-  }
-
-  if (error) {
-    return <div>Error: {error}</div>;
-  }
-
-  return (
-    <div>
-      <Title level={2} style={{ marginBottom: "24px" }}>
-        My Courses
-      </Title>
-      <Row gutter={[16, 16]}>
-        {courses.map((course: Course) => (
-          <Col xs={24} sm={24} md={12} lg={12} xl={12} key={course.id}>
-            <StyledCard
-              cover={<CoverImage svgContent={generateDarkSVG()} />}
-              style={{
-                cursor: "pointer",
-              }}
-            >
-              <Meta
-                title={<CourseTitle level={4}>{course.name}</CourseTitle>}
-                description={
-                  <Space direction="vertical" size="small">
-                    <Text type="secondary">{course.description}</Text>
-                    <Space>
-                      <Tag icon={<BookOutlined />} color="blue">
-                        {course.category}
-                      </Tag>
-                      <Tag icon={<CalendarOutlined />} color="green">
-                        {course.startDate} - {course.endDate}
-                      </Tag>
-                      <Tag icon={<TeamOutlined />} color="orange">
-                        {course.maxStudents} students max
-                      </Tag>
-                    </Space>
-                    <Text>Difficulty: {course.difficulty}</Text>
-                    <Text>
-                      Status: {course.isActive ? "Active" : "Inactive"}
-                    </Text>
-                  </Space>
-                }
-              />
-            </StyledCard>
-          </Col>
-        ))}
-      </Row>
-    </div>
-  );
 };
 
 export default UserCourses;
