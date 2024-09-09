@@ -9,8 +9,20 @@ import {
 } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 
+/**
+ * AddDropDown component provides a dropdown menu for creating various course-related items.
+ *
+ * @component
+ * @returns {React.FC} A dropdown menu with options to create announcements, assignments, materials, and quizzes.
+ */
 const AddDropDown: React.FC = () => {
   const navigate = useNavigate();
+
+  /**
+   * Handles the click event on a menu item and navigates to the create page.
+   *
+   * @param {string} key - The key of the clicked menu item.
+   */
   const handleMenuClick = (key: string) => {
     let compType: string;
     switch (key) {
@@ -36,6 +48,11 @@ const AddDropDown: React.FC = () => {
     });
   };
 
+  /**
+   * Menu items for the dropdown.
+   *
+   * @type {MenuProps["items"]}
+   */
   const items: MenuProps["items"] = [
     {
       key: "1",
@@ -62,6 +79,7 @@ const AddDropDown: React.FC = () => {
       onClick: () => handleMenuClick("4"),
     },
   ];
+
   return (
     <Dropdown menu={{ items }}>
       <Button icon={<PlusOutlined />} type="primary">
