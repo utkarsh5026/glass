@@ -122,12 +122,17 @@ const CourseSearchAndFilters: React.FC<CourseSearchAndFiltersProps> = ({
 
 const SearchContainer = styled.div`
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
-  margin-bottom: 16px;
+  gap: 16px;
+  padding-bottom: 26px;
+  position: sticky;
+  top: 0;
+  z-index: 1000; // Ensure it stays on top of other elements
 `;
 
 const StyledSearch = styled(Search)`
-  width: 300px;
+  width: 60%;
+  max-width: 600px;
 `;
 export default CourseSearchAndFilters;

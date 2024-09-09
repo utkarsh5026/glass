@@ -82,4 +82,5 @@ button:focus-visible {
 html,
 body {
   overflow-y: auto;
+  scroll-behavior: smooth;
 }
