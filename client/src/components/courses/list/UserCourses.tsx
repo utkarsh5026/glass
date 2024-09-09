@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { Card, Row, Col, Typography, Space, Tag } from "antd";
 import styled from "styled-components";
-import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import { useAppDispatch, useAppSelector } from "../../../store/hooks";
 import {
   BookOutlined,
   CalendarOutlined,
   TeamOutlined,
 } from "@ant-design/icons";
-import type { Course } from "../../store/courses/types";
-import { fetchUserCourses } from "../../store/courses/slice";
+import type { Course } from "../../../store/courses/types";
+import { fetchUserCourses } from "../../../store/courses/slice";
 import CourseSearchAndFilters, { FilterState } from "./SearchFilter";
 
 const { Title, Text } = Typography;
