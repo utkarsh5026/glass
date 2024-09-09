@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Card, Row, Col, Typography, Space, Tag } from "antd";
 import styled from "styled-components";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
@@ -9,6 +9,7 @@ import {
 } from "@ant-design/icons";
 import type { Course } from "../../store/courses/types";
 import { fetchUserCourses } from "../../store/courses/slice";
+import CourseSearchAndFilters from "./SearchFilter";
 
 const { Title, Text } = Typography;
 const { Meta } = Card;
@@ -20,27 +21,71 @@ const { Meta } = Card;
 const UserCourses: React.FC = () => {
   const dispatch = useAppDispatch();
   const { courses, loading, error } = useAppSelector((state) => state.courses);
+  const [filteredCourses, setFilteredCourses] = useState<Course[]>([]);
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
     const not = false;
     if (not) dispatch(fetchUserCourses());
   }, [dispatch]);
 
-  if (loading) {
-    return <div>Loading courses...</div>;
-  }
+  useEffect(() => {
+    setFilteredCourses(courses);
+  }, [courses]);
 
-  if (error) {
-    return <div>Error: {error}</div>;
-  }
+  const handleSearch = (value: string) => {
+    setSearch(value);
+    filterCourses(value, {});
+  };
+
+  const handleFilterChange = (filters: {
+    category: string;
+    difficulty: [number, number];
+    isActive: boolean;
+  }) => {
+    filterCourses(search, filters);
+  };
+
+  const filterCourses = (search: string, filters: any) => {
+    let filtered = courses.filter((course) =>
+      course.name.toLowerCase().includes(search.toLowerCase())
+    );
+
+    if (filters.category && filters.category !== "All") {
+      filtered = filtered.filter(
+        (course) => course.category === filters.category
+      );
+    }
+
+    filtered = filtered.filter(
+      (course) =>
+        course.difficulty >= filters.difficulty[0] &&
+        course.difficulty <= filters.difficulty[1]
+    );
+
+    if (filters.isActive)
+      filtered = filtered.filter((course) => course.isActive);
+
+    setFilteredCourses(filtered);
+  };
+
+  const categories = Array.from(
+    new Set(courses.map((course) => course.category))
+  );
+
+  if (loading) return <div>Loading courses...</div>;
+
+  if (error) return <div>Error: {error}</div>;
 
   return (
     <div>
-      <Title level={2} style={{ marginBottom: "24px" }}>
-        My Courses
-      </Title>
+      <CourseSearchAndFilters
+        onSearch={handleSearch}
+        onFilterChange={handleFilterChange}
+        categories={categories}
+      />
       <Row gutter={[16, 16]}>
-        {courses.map((course: Course) => (
+        {filteredCourses.map((course: Course) => (
           <Col xs={24} sm={24} md={12} lg={12} xl={12} key={course.id}>
             <StyledCard
               cover={<CoverImage svgContent={generateDarkSVG()} />}
