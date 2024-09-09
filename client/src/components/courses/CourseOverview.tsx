@@ -1,5 +1,5 @@
 import React from "react";
-import { Row, Col, Tabs, Button } from "antd";
+import { Row, Col, Tabs } from "antd";
 import {
   AppstoreOutlined,
   FileOutlined,
@@ -10,6 +10,7 @@ import {
 import Announcement from "./announcement/Announcement";
 import CoursePeople from "./people/CoursePeople";
 import Activity from "../admin/activity/Activity";
+import AddDropDown from "./AddDropDown";
 
 const CourseOverview: React.FC = () => {
   const onTabChange = (key: string) => {
@@ -45,7 +46,7 @@ const CourseOverview: React.FC = () => {
               paddingTop: "10px",
             }}
             tabBarExtraContent={{
-              right: <Button>Add</Button>,
+              right: <AddDropDown />,
             }}
           >
             <Tabs.TabPane
