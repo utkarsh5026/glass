@@ -8,6 +8,6 @@ export interface Mentor {
 export interface Student {
   email: string;
   name: string;
-  id: string;
+  id: number;
   profilePictureUrl: string;
 }
