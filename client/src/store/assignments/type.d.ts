@@ -16,3 +16,13 @@ export interface Assignment {
   isPeerReviewEnabled: boolean;
   isPublished: boolean;
 }
+
+export interface AssignmentBasic {
+  id: number;
+  title: string;
+  description: string;
+  startDate: string;
+  dueDate: string;
+  startTime: string;
+  endTime: string;
+}

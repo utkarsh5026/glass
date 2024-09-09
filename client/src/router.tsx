@@ -2,7 +2,8 @@ import { createBrowserRouter } from "react-router-dom";
 import Auth from "./components/auth/Auth";
 import NotFound from "./components/error/NotFound";
 import Dashboard from "./components/dashboard/Dashboard";
-import UserCourses from "./components/courses/UserCourses";
+import UserCourses from "./components/courses/list/UserCourses";
+import CourseOverview from "./components/courses/CourseOverview";
 import { Suspense } from "react";
 import { Spin } from "antd";
 
@@ -28,6 +29,14 @@ export const router = createBrowserRouter([
     element: (
       <Suspense fallback={<Spin size="large" />}>
         <UserCourses />
+      </Suspense>
+    ),
+  },
+  {
+    path: "/courses/:courseId",
+    element: (
+      <Suspense fallback={<Spin size="large" />}>
+        <CourseOverview />
       </Suspense>
     ),
   },

@@ -5,6 +5,7 @@ import authReducer from "./auth/authSlice";
 import assignmentReducer from "./assignments/slice";
 import dashboardReducer from "./dasboard/slice";
 import coursesReducer from "./courses/slice";
+import materialReducer from "./materials/slice";
 
 const store = configureStore({
   reducer: {
@@ -14,6 +15,7 @@ const store = configureStore({
     auth: authReducer,
     dashboard: dashboardReducer,
     courses: coursesReducer,
+    materials: materialReducer,
   },
 });
 

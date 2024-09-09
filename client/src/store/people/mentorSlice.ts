@@ -6,7 +6,14 @@ interface MentorState {
 }
 
 const initialState: MentorState = {
-  mentors: [],
+  mentors: [
+    {
+      id: "1",
+      name: "John Doe",
+      email: "john.doe@example.com",
+      profilePictureUrl: "https://example.com/john.jpg",
+    },
+  ],
 };
 
 const mentorSlice = createSlice({

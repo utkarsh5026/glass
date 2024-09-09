@@ -4,6 +4,7 @@ import CourseStudents from "./CourseStudents";
 import { useAppSelector } from "../../../store/hooks";
 import { Row, Col } from "antd";
 
+
 const CoursePeople: React.FC = () => {
   const mentors = useAppSelector((state) => state.mentors.mentors);
   const students = useAppSelector((state) => state.students.students);
