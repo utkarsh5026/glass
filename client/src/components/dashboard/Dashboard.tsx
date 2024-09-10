@@ -18,7 +18,6 @@ import {
 } from "@ant-design/icons";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { fetchDashboardData } from "../../store/dasboard/slice";
-import DashboardHeader from "./Header";
 import styled from "styled-components";
 
 const { Content } = Layout;
@@ -69,7 +68,6 @@ const Dashboard: React.FC = () => {
   if (isLoading) {
     return (
       <StyledLayout>
-        <DashboardHeader />
         <StyledContent>
           <Spin size="large" />
         </StyledContent>
@@ -80,7 +78,6 @@ const Dashboard: React.FC = () => {
   if (error) {
     return (
       <StyledLayout>
-        <DashboardHeader />
         <StyledContent>
           <Title level={2}>Error</Title>
           <Text type="danger">{error}</Text>
@@ -91,7 +88,6 @@ const Dashboard: React.FC = () => {
 
   return (
     <StyledLayout>
-      <DashboardHeader />
       <StyledContent>
         <Title level={2} style={{ marginBottom: 24 }}>
           Dashboard
