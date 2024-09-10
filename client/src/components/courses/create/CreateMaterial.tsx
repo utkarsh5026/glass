@@ -12,7 +12,7 @@ import Description from "./components/Description";
  * @component
  * @returns {JSX.Element} Rendered CreateMaterial component
  */
-const CreateMaterial: React.FC = () => {
+const CreateMaterial: React.FC = (): JSX.Element => {
   const [form] = Form.useForm();
   const [markdown, setMarkdown] = useState<string>("");
 

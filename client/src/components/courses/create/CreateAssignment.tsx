@@ -14,7 +14,7 @@ const { RangePicker } = DatePicker;
  * @component
  * @returns {JSX.Element} Rendered CreateAssignment component
  */
-const CreateAssignment: React.FC = () => {
+const CreateAssignment: React.FC = (): JSX.Element => {
   const [form] = Form.useForm();
   const [markdown, setMarkdown] = useState<string>("");
 

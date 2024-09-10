@@ -6,12 +6,23 @@ import CreateMaterial from "./CreateMaterial";
 
 type ComponentType = "course" | "quiz" | "material" | "assignment";
 
+/**
+ * CreateCourseComponent is a React functional component that allows users to create
+ * different types of course content such as assignments, materials, and quizzes.
+ *
+ * @component
+ * @returns {JSX.Element} Rendered CreateCourseComponent
+ */
 const CreateCourseComponent: React.FC = () => {
   const location = useLocation();
   let componentType = "assignment" as ComponentType;
   if (location.state) componentType = location.state.compType as ComponentType;
   const [component, setComponent] = useState<ComponentType>(componentType);
 
+  /**
+   * Array of segment options for the Segmented component
+   * @type {Array<{label: string, value: string, component?: JSX.Element}>}
+   */
   const segments = [
     {
       label: "Assignment",
