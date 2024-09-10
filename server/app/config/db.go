@@ -10,6 +10,13 @@ import (
 	"gorm.io/gorm"
 )
 
+// InitDB initializes the database connection
+// It retrieves the database connection details from environment variables
+// and establishes a connection to the database using GORM.
+// It also automatically migrates the database models.
+//
+// Returns:
+//   - *gorm.DB: The initialized database connection.
 func InitDB() *gorm.DB {
 	dbHost := os.Getenv("DB_HOST")
 	dbUser := os.Getenv("DB_USER")
