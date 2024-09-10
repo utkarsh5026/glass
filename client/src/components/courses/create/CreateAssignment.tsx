@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { Form, Input, DatePicker, Upload, Button, Row, Col } from "antd";
-import { UploadOutlined } from "@ant-design/icons";
+import { Form, Input, DatePicker, Button, Row, Col } from "antd";
 import Description from "./components/Description";
+import FileUpload from "./components/FileUpload";
+import CourseDropdown from "./components/CourseDropdown";
 
 const { RangePicker } = DatePicker;
 
@@ -16,16 +17,26 @@ const { RangePicker } = DatePicker;
  */
 const CreateAssignment: React.FC = (): JSX.Element => {
   const [form] = Form.useForm();
+  const [courses, setCourses] = useState<string[]>([]);
   const [markdown, setMarkdown] = useState<string>("");
 
-  /**
-   * Handles form submission
-   *
-   * @param {Object} values - The form values
-   */
   const onFinish = (values: any) => {
     console.log("Form values:", values);
     // Handle form submission
+  };
+
+  const handleUpload = (files: File[]) => {
+    console.log("Uploading file:", files);
+    return new Promise<void>((resolve) => {
+      setTimeout(() => {
+        resolve();
+      }, 1000);
+    });
+  };
+
+  const handleCourseSelect = (value: string) => {
+    console.log("Selected course:", value);
+    setCourses([...courses, value]);
   };
 
   return (
@@ -56,6 +67,13 @@ const CreateAssignment: React.FC = (): JSX.Element => {
         </Col>
         <Col span={6}>
           <Form.Item
+            name="course"
+            label="Course"
+            rules={[{ required: true, message: "Please select a course!" }]}
+          >
+            <CourseDropdown onSelect={handleCourseSelect} />
+          </Form.Item>
+          <Form.Item
             name="dateRange"
             label="Start and End Date/Time"
             rules={[
@@ -76,9 +94,7 @@ const CreateAssignment: React.FC = (): JSX.Element => {
               return e && e.fileList;
             }}
           >
-            <Upload>
-              <Button icon={<UploadOutlined />}>Add Files</Button>
-            </Upload>
+            <FileUpload onFilesSelected={handleUpload} />
           </Form.Item>
         </Col>
       </Row>

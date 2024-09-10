@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { Form, Input, Upload, Button, Row, Col } from "antd";
-import { UploadOutlined } from "@ant-design/icons";
+import { Form, Input, Button, Row, Col } from "antd";
 import Description from "./components/Description";
+import FileUpload from "./components/FileUpload";
+import CourseDropdown from "./components/CourseDropdown";
 
 /**
  * CreateMaterial component for creating new course material
@@ -16,14 +17,17 @@ const CreateMaterial: React.FC = (): JSX.Element => {
   const [form] = Form.useForm();
   const [markdown, setMarkdown] = useState<string>("");
 
-  /**
-   * Handles form submission
-   *
-   * @param {Object} values - The form values
-   */
   const onFinish = (values: any) => {
     console.log("Form values:", values);
     // Handle form submission
+  };
+
+  const handleUpload = (files: File[]) => {
+    console.log("Uploading file:", files);
+  };
+
+  const handleCourseSelect = (value: string) => {
+    console.log("Selected course:", value);
   };
 
   return (
@@ -54,6 +58,14 @@ const CreateMaterial: React.FC = (): JSX.Element => {
         </Col>
         <Col span={6}>
           <Form.Item
+            name="course"
+            label="Course"
+            rules={[{ required: true, message: "Please select a course!" }]}
+          >
+            <CourseDropdown onSelect={handleCourseSelect} />
+          </Form.Item>
+
+          <Form.Item
             name="files"
             label="Add Files"
             valuePropName="fileList"
@@ -62,9 +74,7 @@ const CreateMaterial: React.FC = (): JSX.Element => {
               return e && e.fileList;
             }}
           >
-            <Upload>
-              <Button icon={<UploadOutlined />}>Add Files</Button>
-            </Upload>
+            <FileUpload onFilesSelected={handleUpload} />
           </Form.Item>
         </Col>
       </Row>
