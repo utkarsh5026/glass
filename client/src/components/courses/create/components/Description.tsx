@@ -97,6 +97,7 @@ const Description: React.FC<DescriptionProps> = ({ editorRef, ...props }) => {
         .custom-editor {
           flex-grow: 1;
           overflow-y: auto;
+          font-family: "Cascadia Code", sans-serif;
         }
         :global(.custom-editor) {
           height: 100%;
@@ -116,6 +117,7 @@ const Description: React.FC<DescriptionProps> = ({ editorRef, ...props }) => {
         }
         :global(.custom-editor .prose-lg) {
           font-size: 16px;
+          font-family: "Cascadia Code", sans-serif;
         }
         :global(.custom-editor .toolbar button) {
           margin-right: 8px;
