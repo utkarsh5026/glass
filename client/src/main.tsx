@@ -1,11 +1,14 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { ConfigProvider } from "antd";
+import { ConfigProvider, Layout } from "antd";
 import "./index.css";
 import { Provider } from "react-redux";
 import store from "./store/store.ts";
 import { router } from "./router.tsx";
 import { RouterProvider } from "react-router-dom";
+import AppBar from "./AppBar";
+
+const { Header, Content } = Layout;
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -29,7 +32,14 @@ createRoot(document.getElementById("root")!).render(
       }}
     >
       <Provider store={store}>
-        <RouterProvider router={router} />
+        <Layout>
+          <Header style={{ padding: 0, background: "#fff" }}>
+            <AppBar />
+          </Header>
+          <Content>
+            <RouterProvider router={router} />
+          </Content>
+        </Layout>
       </Provider>
     </ConfigProvider>
   </StrictMode>
