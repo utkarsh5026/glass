@@ -53,6 +53,12 @@ const StyledAvatar = styled(Avatar)`
   background-color: #1890ff;
 `;
 
+/**
+ * DashboardHeader component
+ *
+ * This component represents the header of the dashboard, including the logo,
+ * notification bell, and user menu dropdown.
+ */
 const DashboardHeader: React.FC = () => {
   const dispatch = useDispatch();
 

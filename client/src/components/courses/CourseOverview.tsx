@@ -6,10 +6,10 @@ import {
   UsergroupAddOutlined,
   MessageOutlined,
   CalendarOutlined,
+  DownSquareOutlined,
 } from "@ant-design/icons";
 import Announcement from "./announcement/Announcement";
 import CoursePeople from "./people/CoursePeople";
-import Activity from "../admin/activity/Activity";
 import AddDropDown from "./AddDropDown";
 
 const CourseOverview: React.FC = () => {
@@ -69,9 +69,16 @@ const CourseOverview: React.FC = () => {
               key="4"
               icon={<MessageOutlined />}
             ></Tabs.TabPane>
-            <Tabs.TabPane tab="Activity" key="5" icon={<CalendarOutlined />}>
-              <Activity />
-            </Tabs.TabPane>
+            <Tabs.TabPane
+              tab="Calendar"
+              key="5"
+              icon={<CalendarOutlined />}
+            ></Tabs.TabPane>
+            <Tabs.TabPane
+              tab="Submissions"
+              key="6"
+              icon={<DownSquareOutlined />}
+            ></Tabs.TabPane>
           </Tabs>
         </Col>
       </Row>
