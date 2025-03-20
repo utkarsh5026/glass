@@ -4,7 +4,7 @@ services:
   server:
     build:
       context: ./server
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
     ports:
       - "8080:8080"
     depends_on:
@@ -15,6 +15,10 @@ services:
       - DB_PASSWORD=pswrd
       - DB_NAME=glass
       - DB_PORT=5432
+    volumes:
+      - ./server:/app
+      - /app/node_modules
+    command: npm run dev
 
   db:
     image: postgres:13
@@ -30,26 +34,32 @@ services:
   client:
     build:
       context: ./client
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
     ports:
       - "3000:3000"
     depends_on:
       - server
     environment:
-      - REACT_APP_API_URL=http://server:8080
+      - REACT_APP_API_URL=http://localhost:8080
+    volumes:
+      - ./client:/app
+      - /app/node_modules
+    command: npm start
 
   llm:
     build:
       context: ./llm
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
     ports:
       - "8000:8000"
     depends_on:
       - server
     environment:
       - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - DEBUG=True
     volumes:
       - ./llm:/app
+    command: uvicorn llm.main:app --host 0.0.0.0 --port 8000 --reload
 
 volumes:
   postgres_data:
