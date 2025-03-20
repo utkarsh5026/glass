@@ -53,7 +53,8 @@ func setupUserTestRouter(db *gorm.DB) (*gin.Engine, *services.UserService) {
 }
 
 func TestUserRoutes(t *testing.T) {
-	db, _ := setup.SetupTestDB(context.Background(), &models.User{})
+	db, err := setup.SetupTestDB(context.Background(), &models.User{})
+	require.NoError(t, err, "Failed to set up test database")
 	defer setup.CleanupTestDB(context.Background())
 
 	router, userService := setupUserTestRouter(db)

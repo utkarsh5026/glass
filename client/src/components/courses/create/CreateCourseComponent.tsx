@@ -3,6 +3,7 @@ import { Card, Segmented } from "antd";
 import { useLocation } from "react-router-dom";
 import CreateAssignment from "./CreateAssignment";
 import CreateMaterial from "./CreateMaterial";
+import Quiz from "../quiz/Quiz";
 
 type ComponentType = "course" | "quiz" | "material" | "assignment";
 
@@ -29,7 +30,7 @@ const CreateCourseComponent: React.FC = () => {
       value: "assignment",
       component: <CreateAssignment />,
     },
-    { label: "Material", value: "material" },
+    { label: "Material", value: "material", component: <CreateMaterial /> },
     { label: "Quiz", value: "quiz" },
   ];
 
@@ -49,6 +50,7 @@ const CreateCourseComponent: React.FC = () => {
     >
       {component === "assignment" ? <CreateAssignment /> : null}
       {component === "material" ? <CreateMaterial /> : null}
+      {component === "quiz" ? <Quiz /> : null}
     </Card>
   );
 };

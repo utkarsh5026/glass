@@ -105,6 +105,23 @@ func handleAuthError(c *gin.Context, status int, message string) {
 	c.Abort()
 }
 
+// getUserId retrieves the user ID from the gin context.
+// It expects the user ID to be stored in the "userID" key as a uint.
+// Returns the user ID if found, or an error if not present or of incorrect type.
+func getUserId(c *gin.Context) (uint, error) {
+	userID, ok := c.Get("userID")
+	if !ok {
+		return 0, errors.New("user ID not found in context")
+	}
+
+	userIDInt, ok := userID.(uint)
+	if !ok {
+		return 0, errors.New("user ID is not a uint")
+	}
+
+	return userIDInt, nil
+}
+
 var (
 	ExportedExtractToken    = extractToken
 	ExportedValidateToken   = validateToken

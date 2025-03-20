@@ -16,7 +16,7 @@ interface AssignmentOverviewProps {
  * @component
  * @param {Object} props - The component props.
  * @param {AssignmentBasic[]} props.assignments - An array of assignment objects to be displayed.
- * @returns {React.ReactElement} A list of assignments.
+ * @returns {React.FC} A list of assignments.
  */
 const AssignmentOverview: React.FC<AssignmentOverviewProps> = ({
   assignments,

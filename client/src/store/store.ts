@@ -6,6 +6,7 @@ import assignmentReducer from "./assignments/slice";
 import dashboardReducer from "./dasboard/slice";
 import coursesReducer from "./courses/slice";
 import materialReducer from "./materials/slice";
+import quizReducer from "./quiz/slice";
 
 const store = configureStore({
   reducer: {
@@ -16,6 +17,7 @@ const store = configureStore({
     dashboard: dashboardReducer,
     courses: coursesReducer,
     materials: materialReducer,
+    quizzes: quizReducer,
   },
 });
 

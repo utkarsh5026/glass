@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"server/app/models"
 	"server/app/services"
 
@@ -45,5 +46,7 @@ func (h *QuizHandler) GetQuiz(c *gin.Context) {
 		HandleBadRequest(c, err.Error())
 		return
 	}
+
+	fmt.Println("id", id)
 
 }
